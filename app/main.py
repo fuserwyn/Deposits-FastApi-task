@@ -36,13 +36,13 @@ def valid_open_date(json_dict):
 
 def _validate_data(json_dict):
     if not valid_open_date(json_dict):
-        raise DataValidationError("Неправильный формат даты, необходимо dd.mm.YY")
+        raise DataValidationError("Формат даты должен быть dd.mm.YY")
     if json_dict["period"] > 60 or json_dict["period"] < 1:
         raise DataValidationError("Количество месяцев по вкладу должно быть от 1 до 60")
     if json_dict["amount"] <= 9999 or json_dict["amount"] > 3000000:
         raise DataValidationError("Сумма вклада должна составлять от 10000 до 3000000")
     if json_dict["rate"] < 1 or json_dict["rate"] > 8:
-        raise DataValidationError("процент по вкладу должен составлять от 1 до 8%")
+        raise DataValidationError("процент по вкладу должен составлять от 1 до 8")
     return 200
         
 @app.post("/hello")
