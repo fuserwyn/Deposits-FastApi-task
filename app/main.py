@@ -12,7 +12,7 @@ class Deposit(BaseModel):
     date: str
     period: int
     amount: int
-    rate: int
+    rate: float
 
 class DataValidationError(Exception):
     def __init__(self, msg: str):

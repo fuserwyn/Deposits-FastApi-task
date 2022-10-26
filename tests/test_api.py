@@ -10,7 +10,7 @@ class APITestCase(TestCase):
         self.client = TestClient(web_app)
         
     def test_main_url(self):
-        response = self.client.get('/')
+        response = self.client.post('/')
         self.assertEqual(response.status_code, 200)
         
     # def test_valid_data(self):
