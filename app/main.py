@@ -4,22 +4,23 @@ from distutils.log import error
 from email import header
 from dateutil.relativedelta import relativedelta
 import json
-from fastapi import FastAPI, Body, HTTPException
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, Body, HTTPException, Request
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
  
 app = FastAPI()
 
-# class Dummy(BaseModel):
-#     name: str
+class DataValidationError(Exception):
+    def __init__(self, msg: str):
+        self.msg = msg
 
-# class HTTPError(BaseModel):
-#     detail: str
+@app.exception_handler(DataValidationError)
+def data_validation_exception_handler(request: Request, exc: DataValidationError):
+    return JSONResponse(
+        status_code = 400,
+        content={'error': exc.msg}
+    )
 
-#     class Config:
-#         schema_extra = {
-#             "example": {"error": "Описание ошибка"},
-#         }
       
 def valid_open_date(json_dict): 
     result = True 
@@ -29,33 +30,17 @@ def valid_open_date(json_dict):
         result = False
     finally:
         return result
-    
-# @app.get(
-#     "/test",
-#     responses={
-#         200: {"model": Dummy},
-#         409: {
-#             "model": HTTPError,
-#             "description": "This endpoint always raises an error",
-#         },
-#     },
-# )
-
-
 
 def _validate_data(json_dict):
     if not valid_open_date(json_dict):
-        raise HTTPException(400, detail={"error": "Описание ошибка"})
-    elif json_dict["period"] > 60 or json_dict["period"] < 1:
-        status = 400
-    elif json_dict["amount"] <= 9999 or json_dict["amount"] > 3000000:
-        status = 400
-    elif json_dict["rate"] < 1 or json_dict["rate"] > 8:
-        status = 400
-    else:
-        status = 200
-    print(status)
-    return status
+        raise DataValidationError("Описание ошибка")
+    if json_dict["period"] > 60 or json_dict["period"] < 1:
+        return 400
+    if json_dict["amount"] <= 9999 or json_dict["amount"] > 3000000:
+        return 400
+    if json_dict["rate"] < 1 or json_dict["rate"] > 8:
+        return 400
+    return 200
         
 @app.get("/")
 def root():
@@ -100,6 +85,6 @@ def hello(date: str  = Body(...,embed=True),
         json_dict_out = dict(zip(date_to_json_list, amount_to_json_list))
         json_object_out = json.dumps(json_dict_out) #Если нужна json строка
     else:
-       raise HTTPException(400, detail={"error": "Описание ошибка"})
+       raise DataValidationError("Описание ошибка")
     return json_dict_out  
         
