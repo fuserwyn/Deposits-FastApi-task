@@ -7,6 +7,6 @@ services:
     network_mode: host
     ports:
       - "8000:000"
-    command: bash -c "uvicorn main:app"
+    # command: bash -c "uvicorn main:app"
     env_file:
       - .env
