@@ -12,6 +12,7 @@ setup (
         'SQLAlchemy==1.4.26',
         'pytest==6.2.5',
         'requests==2.26.0',
+        'python-dateutil==2.8.2',
     ],
     scripts=['app/main.py']
 )
