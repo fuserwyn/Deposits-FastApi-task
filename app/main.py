@@ -10,6 +10,12 @@ from pydantic import BaseModel
  
 app = FastAPI()
 
+class Deposit(BaseModel):
+    date: str
+    period: int
+    amount: int
+    rate: int
+
 class DataValidationError(Exception):
     def __init__(self, msg: str):
         self.msg = msg
@@ -21,7 +27,6 @@ def data_validation_exception_handler(request: Request, exc: DataValidationError
         content={'error': exc.msg}
     )
 
-      
 def valid_open_date(json_dict): 
     result = True 
     try:
@@ -33,43 +38,30 @@ def valid_open_date(json_dict):
 
 def _validate_data(json_dict):
     if not valid_open_date(json_dict):
-        raise DataValidationError("Описание ошибка")
+        raise DataValidationError("Неправильный формат даты, необходимо dd.mm.YY")
     if json_dict["period"] > 60 or json_dict["period"] < 1:
-        return 400
+        raise DataValidationError("Количество месяцев по вкладу должно быть от 1 до 60")
     if json_dict["amount"] <= 9999 or json_dict["amount"] > 3000000:
-        return 400
+        raise DataValidationError("Сумма вклада должна составлять от 10000 до 3000000")
     if json_dict["rate"] < 1 or json_dict["rate"] > 8:
-        return 400
+        raise DataValidationError("процент по вкладу должен составлять от 1 до 8%")
     return 200
         
-@app.get("/")
-def root():
-    return FileResponse("public/index.html")
-# def hello(json_str):
-    #json_dict=json.loads(json_str)
 @app.post("/hello")
-def hello(date: str  = Body(...,embed=True), 
-            period: int = Body(...,embed=True),
-            amount: int = Body(...,embed=True),
-            rate: float = Body(...,embed=True)):
+def hello(deposit: Deposit):
     json_dict = {
-        "date": date,
-        "period": period, 
-        "amount": amount, 
-        "rate": rate
+        "date": deposit.date,
+        "period": deposit.period, 
+        "amount": deposit.amount, 
+        "rate": deposit.rate
     }
     status = _validate_data(json_dict)
     if status == 200:
-        # date = json_dict["date"]
-        # period = json_dict["period"]
-        # amount = json_dict["amount"]
-        # rate = json_dict["rate"]
-        
-        # Serializing json  
-        # json_object = json.dumps(json_dict)
-        
+        date = json_dict["date"]
+        period = json_dict["period"]
+        amount = json_dict["amount"]
+        rate = json_dict["rate"]
         date_deposit_open = datetime.strptime(date, "%d.%m.%Y")
-        
         date_to_json_list = []
         amount_to_json_list = []
         curr_date = date_deposit_open
@@ -79,12 +71,9 @@ def hello(date: str  = Body(...,embed=True),
             curr_month_maxdays = calendar.monthrange(curr_date.year, curr_date.month)[1]
             payment_day = min(curr_month_maxdays, date_deposit_open.day)
             curr_date = curr_date.replace(day=payment_day)
-            print(curr_date)
             date_to_json_list.append(curr_date.strftime("%d.%m.%Y"))
             amount_to_json_list.append(round(amount, 2))
         json_dict_out = dict(zip(date_to_json_list, amount_to_json_list))
         json_object_out = json.dumps(json_dict_out) #Если нужна json строка
-    else:
-       raise DataValidationError("Описание ошибка")
     return json_dict_out  
         
