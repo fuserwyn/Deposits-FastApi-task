@@ -47,7 +47,7 @@ def _validate_data(json_dict):
 
 @app.get("/")
 def root():
-    return {"go to http://127.0.0.1:8000/docs"}
+    return {"go_to": "http://127.0.0.1:8000/docs"}
        
 @app.post("/hello")
 def hello(deposit: Deposit):
@@ -78,4 +78,3 @@ def hello(deposit: Deposit):
         json_dict_out = dict(zip(date_to_json_list, amount_to_json_list))
         json_object_out = json.dumps(json_dict_out) #Если нужна json строка
     return json_dict_out  
-        
