@@ -28,7 +28,7 @@ def data_validation_exception_handler(request: Request, exc: DataValidationError
 def valid_open_date(json_dict): 
     result = True 
     try:
-        valid_date = datetime.strptime(json_dict["date"], '%m.%d.%Y')
+        valid_date = datetime.strptime(json_dict["date"], '%d.%m.%Y')
     except ValueError as e: 
         result = False
     finally:
@@ -44,7 +44,11 @@ def _validate_data(json_dict):
     if json_dict["rate"] < 1 or json_dict["rate"] > 8:
         raise DataValidationError("процент по вкладу должен составлять от 1 до 8")
     return 200
-        
+
+@app.get("/")
+def root():
+    return {"go to http://127.0.0.1:8000/docs"}
+       
 @app.post("/hello")
 def hello(deposit: Deposit):
     json_dict = {
