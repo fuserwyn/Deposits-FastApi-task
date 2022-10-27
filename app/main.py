@@ -76,5 +76,5 @@ def hello(deposit: Deposit):
             date_to_json_list.append(curr_date.strftime("%d.%m.%Y"))
             amount_to_json_list.append(round(amount, 2))
         json_dict_out = dict(zip(date_to_json_list, amount_to_json_list))
-        json_object_out = json.dumps(json_dict_out) #Если нужна json строка
+        # json_object_out = json.dumps(json_dict_out) #Если нужна json строка
     return json_dict_out  
