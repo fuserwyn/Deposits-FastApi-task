@@ -2,8 +2,7 @@ import pytest
 from unittest import TestCase
 from urllib import response
 from fastapi.testclient import TestClient
-from app.main import app, hello, Deposit
-import json
+from app.main import app
 from app.main import DataValidationError, _validate_data, valid_open_date
 
 @pytest.mark.parametrize("data, expected_bool", 
