@@ -4,9 +4,5 @@ services:
   app:
     build: .
     container_name: fast-app
-    # network_mode: host
     ports:
       - "8000:8000"
-    # command: bash -c "uvicorn main:app"
-    # env_file:
-    #   - .env

@@ -6,10 +6,10 @@ COPY . /app
 
 RUN set -ex && \
     cd /app && \
-    pip install -e .
+    pip install -r requirements.txt
 
 EXPOSE 8000
 
 WORKDIR /app
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0"]
