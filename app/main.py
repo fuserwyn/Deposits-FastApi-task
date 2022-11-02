@@ -84,15 +84,12 @@ def root():
        
 @app.post("/hello")
 def hello(input_json: Deposit):
-    try:
-        deposit = {
+    deposit = {
         "date": input_json.date,
         "periods": input_json.periods, 
         "amount": input_json.amount, 
         "rate": input_json.rate
     }
-    except ValidationError as e:
-        raise DataValidationError(str(e.json()))  
     date = deposit["date"]
     periods = deposit["periods"]
     amount = deposit["amount"]
