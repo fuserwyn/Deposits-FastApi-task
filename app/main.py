@@ -83,16 +83,20 @@ def root():
     return {"go_to": "http://127.0.0.1:8000/docs"}
        
 @app.post("/hello")
-def hello(input_json):
+def hello(input_json: Deposit):
     try:
-        parsed_json = json.loads(input_json)
-        deposit = Deposit(**parsed_json)
+        deposit = {
+        "date": input_json.date,
+        "periods": input_json.periods, 
+        "amount": input_json.amount, 
+        "rate": input_json.rate
+    }
     except ValidationError as e:
         raise DataValidationError(str(e.json()))  
-    date = deposit.date
-    periods = deposit.periods
-    amount = deposit.amount
-    rate = deposit.rate
+    date = deposit["date"]
+    periods = deposit["periods"]
+    amount = deposit["amount"]
+    rate = deposit["rate"]
     date_deposit_open = datetime.strptime(date, "%d.%m.%Y")
     date_to_json_list = []
     amount_to_json_list = []
