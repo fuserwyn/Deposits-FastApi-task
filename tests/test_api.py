@@ -8,22 +8,22 @@ from app.main import DataValidationError, valid_open_date
 @pytest.mark.parametrize("data, expected_bool", 
     [({
         "date": '31.01.2021',
-        "periods": 3, 
+        "period": 3, 
         "amount": 10000, 
         "rate": 6
     }, True), ({
         "date": '01.31.2021',
-        "periods": 3, 
+        "period": 3, 
         "amount": 10000, 
         "rate": 6
     }, False),({
         "date": '01.31/2021',
-        "periods": 3, 
+        "period": 3, 
         "amount": 10000, 
         "rate": 6
     }, False), ({
         "date": 'первое апреля',
-        "periods": 3, 
+        "period": 3, 
         "amount": 10000, 
         "rate": 6
     }, False)])
@@ -43,8 +43,13 @@ def test_main_url_bad():
     assert response.status_code == 404
 
 def test_post():
-    deposit = '{"date": "31.01.2021","periods": 3, "amount": 10000, "rate": 6}'
-    response = client.post('/hello', deposit)
+    deposit = {
+        "date": '31.01.2021',
+        "period": 3, 
+        "amount": 10000, 
+        "rate": 6
+    }
+    response = client.post('/hello', json = deposit)
     assert response.status_code == 200
     assert response.json() == {
                         "28.02.2021": 10050,
@@ -54,7 +59,7 @@ def test_post():
 def test_post_bad_calculation():
     deposit = {
         "date": '31.01.2021',
-        "periods": 3, 
+        "period": 3, 
         "amount": 10000, 
         "rate": 6
     }
@@ -68,7 +73,7 @@ def test_post_bad_calculation():
 def test_post_wrong_date():
     deposit = {
         "date": '01.31.2021',
-        "periods": 3, 
+        "period": 3, 
         "amount": 10000, 
         "rate": 6
     }
@@ -77,10 +82,10 @@ def test_post_wrong_date():
     assert response.json() == {
         "error": "Формат даты должен быть dd.mm.YY"}
 
-def test_post_wrong_periods():
+def test_post_wrong_period():
     deposit = {
         "date": '31.01.2021',
-        "periods": 61, 
+        "period": 61, 
         "amount": 10000, 
         "rate": 6
     }
@@ -92,7 +97,7 @@ def test_post_wrong_periods():
 def test_post_wrong_amount():
     deposit = {
         "date": '31.01.2021',
-        "periods": 3, 
+        "period": 3, 
         "amount": 7777, 
         "rate": 6
     }
@@ -104,7 +109,7 @@ def test_post_wrong_amount():
 def test_post_wrong_rate():
     deposit = {
         "date": '31.01.2021',
-        "periods": 3, 
+        "period": 3, 
         "amount": 10000, 
         "rate": 8.1
     }
@@ -112,4 +117,3 @@ def test_post_wrong_rate():
     assert response.status_code == 400
     assert response.json() == {
         "error": "процент по вкладу должен составлять от 1 до 8"}
-    

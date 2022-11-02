@@ -70,9 +70,7 @@ class Deposit(BaseModel):
         if not valid_open_date(date):
             raise DataValidationError("Формат даты должен быть dd.mm.YY")
         return date
-    
-    
-    
+
 @app.exception_handler(DataValidationError)
 def data_validation_exception_handler(request: Request, exc: DataValidationError):
     return JSONResponse(
