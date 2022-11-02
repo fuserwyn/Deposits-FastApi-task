@@ -4,6 +4,7 @@ from urllib import response
 from fastapi.testclient import TestClient
 from app.main import app
 from app.main import DataValidationError, valid_open_date
+import json
 
 @pytest.mark.parametrize("data, expected_bool", 
     [({
@@ -49,7 +50,7 @@ def test_post():
         "amount": 10000, 
         "rate": 6
     }
-    response = client.post('/hello', json = deposit)
+    response = client.post('/hello', data = json.dumps(deposit))
     assert response.status_code == 200
     assert response.json() == {
                         "28.02.2021": 10050,
